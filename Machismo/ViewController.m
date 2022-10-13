@@ -6,35 +6,49 @@
 //
 
 #import "ViewController.h"
+#import "PlayingCardDeck.h"
+#import "PlayingCard.h"
+#import "CardMatchingGame.h"
 
 @interface ViewController ()
-@property (weak, nonatomic) IBOutlet UILabel *flipsLabel;
-@property (nonatomic) int flipCount;
+@property (strong, nonatomic) IBOutletCollection(UIButton) NSArray *cardButtons;
+@property (strong, nonatomic) CardMatchingGame *game;
+@property (weak, nonatomic) IBOutlet UILabel *scoreLabel;
 @end
 
 @implementation ViewController
 
-- (void)setFlipCount:(int)flipCount {
-    _flipCount = flipCount;
-    self.flipsLabel.text = [NSString stringWithFormat:@"Flips: %d", self.flipCount];
-    NSLog(@"flipCount changed to %d", self.flipCount);
+- (CardMatchingGame *)game {
+    if (!_game) _game = [[CardMatchingGame alloc] initWithCardCount:[self.cardButtons count]
+                                                          usingDeck:[self createDeck]];
+    return _game;
+}
+
+- (Deck *)createDeck {
+    return [[PlayingCardDeck alloc] init];
 }
 
 - (IBAction)touchCardButton:(UIButton *)sender {
-    if ([sender.currentTitle length]) {
-        UIImage *cardImage = [UIImage imageNamed:@"cardback"];
-        [sender setBackgroundImage:cardImage
-                          forState:UIControlStateNormal];
-        [sender setTitle:@""
-                forState:UIControlStateNormal];
-    } else {
-        UIImage *cardImage = [UIImage imageNamed:@"cardfront"];
-        [sender setBackgroundImage:cardImage
-                          forState:UIControlStateNormal];
-        [sender setTitle:@"A♣"
-                forState:UIControlStateNormal];
-    }
-    self.flipCount++;
+    long chosenButtonIndex = [self.cardButtons indexOfObject:sender];
+    [self.game chooseCardAtIndex:chosenButtonIndex];
+    [self updateUI];
 }
 
+- (void)updateUI {
+    // 遍历所有Button
+    for (UIButton *cardButton in self.cardButtons) {
+        // 从Button获取card（View到Model）
+        long cardButtonIndex = [self.cardButtons indexOfObject:cardButton];
+        Card *card = [self.game cardAtIndex:cardButtonIndex];
+        // 设置标题
+        [cardButton setTitle:[self titleForCard:card] forState:UIControlStateNormal];
+        // 若Button匹配成功，则禁止点击
+        cardButton.enabled = !card.isMatched;
+        self.scoreLabel.text = [NSString stringWithFormat:@"Score: %d", (int)self.game.score];
+    }
+}
+
+- (NSString *)titleForCard:(Card *)card {
+    return card.isChosen ? card.contents : @"";
+}
 @end
