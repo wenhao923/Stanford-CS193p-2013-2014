@@ -33,6 +33,22 @@
     [self.game chooseCardAtIndex:chosenButtonIndex];
     [self updateUI];
 }
+- (IBAction)touchRestartButton:(UIButton *)sender {
+    [self.scoreLabel setText:@"Score: 0"];
+    self.game = nil;
+    self.game = [[CardMatchingGame alloc] initWithCardCount:[self.cardButtons count]
+                                                  usingDeck:[self createDeck]];
+    [self updateUI];
+}
+
+- (IBAction)selectModeButton:(UISegmentedControl *)sender {
+    if (sender.selectedSegmentIndex == 0) {
+        NSLog(@"1");
+    } else if (sender.selectedSegmentIndex == 1) {
+        NSLog(@"2");
+    }
+}
+
 
 - (void)updateUI {
     // 遍历所有Button
@@ -43,7 +59,7 @@
         // 设置标题
         [cardButton setTitle:[self titleForCard:card] forState:UIControlStateNormal];
         // 若Button匹配成功，则禁止点击
-        cardButton.enabled = !card.isMatched;
+        cardButton.isAccessibilityElement = !card.isMatched;
         self.scoreLabel.text = [NSString stringWithFormat:@"Score: %d", (int)self.game.score];
     }
 }

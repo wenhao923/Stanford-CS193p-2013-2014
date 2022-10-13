@@ -41,7 +41,7 @@
 
 @synthesize suit = _suit;   // 同时修改需要添加
 + (NSArray *)validSuits {
-    return @[@"♠︎",@"♣︎",@"♥︎",@"♦︎"];
+    return @[@"♠️",@"♣️",@"♥️",@"♦️"];
 }
 // 保护，suit的setter和getter
 - (void)setSuit:(NSString *)suit {
