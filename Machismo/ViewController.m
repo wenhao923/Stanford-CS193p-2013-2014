@@ -14,6 +14,7 @@
 @property (strong, nonatomic) IBOutletCollection(UIButton) NSArray *cardButtons;
 @property (strong, nonatomic) CardMatchingGame *game;
 @property (weak, nonatomic) IBOutlet UILabel *scoreLabel;
+@property (strong, nonatomic) IBOutlet UISegmentedControl *modeButton;
 @end
 
 @implementation ViewController
@@ -29,11 +30,15 @@
 }
 
 - (IBAction)touchCardButton:(UIButton *)sender {
+    // 点击button禁用mode控件
+    self.modeButton.enabled = FALSE;
     long chosenButtonIndex = [self.cardButtons indexOfObject:sender];
     [self.game chooseCardAtIndex:chosenButtonIndex];
     [self updateUI];
 }
 - (IBAction)touchRestartButton:(UIButton *)sender {
+    // 点击restart后启用mode控件
+    self.modeButton.enabled = TRUE;
     [self.scoreLabel setText:@"Score: 0"];
     BOOL tempMode = self.game.mode;
     self.game = nil;

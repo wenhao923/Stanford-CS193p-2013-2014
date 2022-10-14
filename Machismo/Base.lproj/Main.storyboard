@@ -232,7 +232,7 @@
                                     <segment title="3 MODE"/>
                                 </segments>
                                 <connections>
-                                    <action selector="selectModeButton:" destination="BYZ-38-t0r" eventType="valueChanged" id="m3T-sn-yV9"/>
+                                    <action selector="selectModeButton:" destination="BYZ-38-t0r" eventType="valueChanged" id="INV-rm-Kuq"/>
                                 </connections>
                             </segmentedControl>
                         </subviews>
@@ -240,6 +240,7 @@
                         <color key="backgroundColor" red="0.0" green="0.56284224989999998" blue="0.31881666180000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </view>
                     <connections>
+                        <outlet property="modeButton" destination="2dh-nF-7ZN" id="16Y-rv-Nad"/>
                         <outlet property="scoreLabel" destination="Enr-Fl-PQv" id="GlS-8K-yjc"/>
                         <outletCollection property="cardButtons" destination="Gw2-nQ-d1F" id="4wt-e4-lEa"/>
                         <outletCollection property="cardButtons" destination="kKv-G5-4Cw" id="Whx-gy-gxd"/>
