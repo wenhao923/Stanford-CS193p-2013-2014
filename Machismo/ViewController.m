@@ -35,16 +35,20 @@
 }
 - (IBAction)touchRestartButton:(UIButton *)sender {
     [self.scoreLabel setText:@"Score: 0"];
+    BOOL tempMode = self.game.mode;
     self.game = nil;
     self.game = [[CardMatchingGame alloc] initWithCardCount:[self.cardButtons count]
                                                   usingDeck:[self createDeck]];
+    self.game.mode = tempMode;
     [self updateUI];
 }
 
 - (IBAction)selectModeButton:(UISegmentedControl *)sender {
     if (sender.selectedSegmentIndex == 0) {
+        self.game.mode = TRUE;
         NSLog(@"1");
     } else if (sender.selectedSegmentIndex == 1) {
+        self.game.mode = FALSE;
         NSLog(@"2");
     }
 }

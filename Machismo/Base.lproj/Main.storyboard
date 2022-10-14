@@ -224,6 +224,17 @@
                                     <action selector="touchRestartButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="zez-WD-ahk"/>
                                 </connections>
                             </button>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="2dh-nF-7ZN">
+                                <rect key="frame" x="217" y="566" width="139" height="32"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <segments>
+                                    <segment title="2 MODE"/>
+                                    <segment title="3 MODE"/>
+                                </segments>
+                                <connections>
+                                    <action selector="selectModeButton:" destination="BYZ-38-t0r" eventType="valueChanged" id="m3T-sn-yV9"/>
+                                </connections>
+                            </segmentedControl>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" red="0.0" green="0.56284224989999998" blue="0.31881666180000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
