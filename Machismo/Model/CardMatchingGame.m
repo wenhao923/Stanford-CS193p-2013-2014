@@ -11,6 +11,7 @@
 @interface CardMatchingGame()
 @property (nonatomic, readwrite) NSInteger score;
 @property (nonatomic, strong) NSMutableArray *cards; // of Card
+@property (nonatomic, readwrite) NSString *text;
 @end
 
 @implementation CardMatchingGame
@@ -35,7 +36,7 @@
                 break;
             }
         }
-        self.mode = TRUE;
+        self.mode = 2;
     }
     
     return self;
@@ -57,83 +58,50 @@ static const int COST_TO_CHOOSE = 1;
         // 若卡牌已选择，则取消选择，并翻面
         if (card.isChosen) {
             card.chosen = NO;
+            self.text = @"";
         } else {
             // 根据游戏模式做不同策略
-            // 2-match模式
-            if (self.mode) {
-                // 若卡牌未选择，和其他已选择的卡牌匹配
-                for (Card *otherCard in self.cards) {
-                    //当前卡牌与其它已选择、未匹配的卡牌进行match
-                    if (otherCard.isChosen && !otherCard.isMatched) {
-                        int matchScore = [card match:@[otherCard]];
-                        if (matchScore) {
-                            self.score += matchScore * MATCH_BONUS;
-                            // 如果匹配成功，则将卡牌都设为匹配成功
-                            otherCard.matched = YES;
-                            card.matched = YES;
-                        } else {
-                            self.score -= MISMATCH_PENALTY;
-                            // 为匹配的话其它卡牌则取消选择，并翻面
-                            otherCard.chosen = NO;
-                        }
-                        break;
-                    }
-                }
-            } else {
-                // 3-match模式
-                NSMutableArray *chosenCard = [[NSMutableArray alloc] init];
-                [chosenCard addObject:card];
-                // 把所有被选择的card加入到一个Array中
-                for (Card *otherCard in self.cards) {
-                    if (otherCard.isChosen && !otherCard.isMatched) {
-                        [chosenCard addObject:otherCard];
-                    }
-                }
-                // 若只选择一张牌，就不做match了
-                if ([chosenCard count] > 2) {
-                    int matchScore = [self match:chosenCard];
-                    if (matchScore) {
-                        self.score += matchScore * MATCH_BONUS;
-                        // 如果匹配成功，则将卡牌都设为匹配成功
-                        for (int i = 0; i < [chosenCard count]; i++) {
-                            PlayingCard *curCard = chosenCard[i];
-                            curCard.matched = YES;
-                        }
-                    } else {
-                        self.score -= 3;
-                        // 为匹配的话其它卡牌则取消选择，并翻面
-                        for (int i = 1; i < [chosenCard count]; i++) {
-                            PlayingCard *curCard = chosenCard[i];
-                            curCard.chosen = NO;
-                        }
-                    }
+            self.text = card.contents;
+            // 将所有待匹配卡片放入数组
+            NSMutableArray *otherCards = [[NSMutableArray alloc] init];
+            for (Card *otherCard in self.cards) {
+                if (otherCard.isChosen && !otherCard.isMatched) {
+                    [otherCards addObject:otherCard];
                 }
             }
-            
+            // 3-match需要三张，2-match需要两张
+            if (self.mode-1 == [otherCards count]) {
+                int matchScore = [card match:otherCards];
+                if (matchScore) {
+                    self.score += matchScore * MATCH_BONUS;
+                    // 如果匹配成功，则将卡牌都设为匹配成功
+                    card.matched = YES;
+                    for (Card *otherCard in otherCards) {
+                        otherCard.matched = YES;
+                    }
+                    // 修改显示文字
+                    self.text = [NSString stringWithFormat:@"Matched %@", card.contents];
+                    for (Card *otherCard in otherCards) {
+                        self.text = [self.text stringByAppendingString:otherCard.contents];
+                    }
+                    self.text = [NSString stringWithFormat:@"%@ for %d points.", self.text, matchScore * MATCH_BONUS];
+                } else {
+                    self.score -= MISMATCH_PENALTY;
+                    // 为匹配的话其它卡牌则取消选择，并翻面
+                    for (Card *otherCard in otherCards) {
+                        otherCard.chosen = NO;
+                    }
+                    // 修改显示文字
+                    self.text = card.contents;
+                    for (Card *otherCard in otherCards) {
+                        self.text = [self.text stringByAppendingString:otherCard.contents];
+                    }
+                    self.text = [NSString stringWithFormat:@"%@ don't matched!%d point penalty!", self.text, MISMATCH_PENALTY];
+                }
+            }
             self.score -= COST_TO_CHOOSE;
             card.chosen = YES;
         }
     }
-}
-
-// 多张牌匹配
-- (int)match:(NSMutableArray *)cards {
-    int finalScore = 0;
-    PlayingCard *firstCard = cards[0];
-    PlayingCard *secondCard = cards[1];
-    PlayingCard *thirdCard = cards[2];
-    
-    if (firstCard.rank == secondCard.rank && secondCard.rank == thirdCard.rank) {
-        finalScore += 16;
-    }   else if (firstCard.rank == secondCard.rank || secondCard.rank == thirdCard.rank || firstCard.rank == thirdCard.rank) {
-        finalScore += 2;
-    }
-    
-    if (firstCard.suit == secondCard.suit && secondCard.suit == thirdCard.suit) {
-        finalScore += 4;
-    }   else if (firstCard.suit == secondCard.suit || secondCard.suit == thirdCard.suit || firstCard.suit == thirdCard.suit) {
-        finalScore += 1;
-    }
-    return finalScore;
 }
 @end

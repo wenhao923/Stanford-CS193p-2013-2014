@@ -14,7 +14,8 @@
 @property (strong, nonatomic) IBOutletCollection(UIButton) NSArray *cardButtons;
 @property (strong, nonatomic) CardMatchingGame *game;
 @property (weak, nonatomic) IBOutlet UILabel *scoreLabel;
-@property (strong, nonatomic) IBOutlet UISegmentedControl *modeButton;
+@property (weak, nonatomic) IBOutlet UISegmentedControl *modeButton;
+@property (weak, nonatomic) IBOutlet UILabel *logLabel;
 @end
 
 @implementation ViewController
@@ -33,27 +34,25 @@
     // 点击button禁用mode控件
     self.modeButton.enabled = FALSE;
     long chosenButtonIndex = [self.cardButtons indexOfObject:sender];
+     
     [self.game chooseCardAtIndex:chosenButtonIndex];
     [self updateUI];
 }
 - (IBAction)touchRestartButton:(UIButton *)sender {
     // 点击restart后启用mode控件
     self.modeButton.enabled = TRUE;
-    [self.scoreLabel setText:@"Score: 0"];
-    BOOL tempMode = self.game.mode;
+    NSInteger tempMode = self.game.mode;
     self.game = nil;
-    self.game = [[CardMatchingGame alloc] initWithCardCount:[self.cardButtons count]
-                                                  usingDeck:[self createDeck]];
     self.game.mode = tempMode;
     [self updateUI];
 }
 
 - (IBAction)selectModeButton:(UISegmentedControl *)sender {
     if (sender.selectedSegmentIndex == 0) {
-        self.game.mode = TRUE;
+        self.game.mode = 2;
         NSLog(@"1");
     } else if (sender.selectedSegmentIndex == 1) {
-        self.game.mode = FALSE;
+        self.game.mode = 3;
         NSLog(@"2");
     }
 }
@@ -70,6 +69,7 @@
         // 若Button匹配成功，则禁止点击
         cardButton.isAccessibilityElement = !card.isMatched;
         self.scoreLabel.text = [NSString stringWithFormat:@"Score: %d", (int)self.game.score];
+        self.logLabel.text = self.game.text;
     }
 }
 

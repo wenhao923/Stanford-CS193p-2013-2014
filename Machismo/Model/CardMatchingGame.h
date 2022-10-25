@@ -19,7 +19,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (Card *)cardAtIndex:(NSUInteger)index;
 
 @property (nonatomic, readonly) NSInteger score;
-@property (nonatomic) BOOL mode;
+@property (nonatomic) NSInteger mode;
+@property (nonatomic, readonly) NSString *text;
 
 @end
 

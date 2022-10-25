@@ -20,15 +20,20 @@
 - (int)match:(NSArray *)otherCards {
     // 初始化赋值
     int score = 0;
+    unsigned long numOtherCards = [otherCards count];
     // 如果待匹配的只有一张牌
-    if ([otherCards count] == 1) {
-        PlayingCard *otherCard = [otherCards firstObject];
-        // 数字相同，赋4分
-        if (otherCard.rank == self.rank) {
-            score = 4;
-        } else if ([otherCard.suit isEqualToString:self.suit]) {
-            score = 1;
+    if (numOtherCards) {
+        for (PlayingCard *otherCard in otherCards) {
+            // 数字相同，赋4分
+            if (otherCard.rank == self.rank) {
+                score = 4;
+            } else if ([otherCard.suit isEqualToString:self.suit]) {
+                score = 1;
+            }
         }
+    }
+    if (numOtherCards > 1) {
+        score += [[otherCards firstObject] match:[otherCards subarrayWithRange:NSMakeRange(1, numOtherCards-1)]];
     }
     return score;
 }
